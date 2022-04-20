@@ -154,7 +154,7 @@ class BaseOffPolicy(ABC):
             while not is_terminal and ep_step < self.config["episode_max_steps"]:
                 # Generate action
                 features = self._extract_features(state)
-                action = self.policy(features, [state["command"]])
+                action = self.policy(features.unsqueeze(0), [state["command"]])
 
                 # Take step
                 new_state, reward_dict, is_terminal = self._take_step(state, action)
@@ -216,7 +216,7 @@ class BaseOffPolicy(ABC):
             self.p_optim.zero_grad()
 
             # Calculating q_loss and adding to iter loss
-            q_val_estimates, q_loss = self._compute_q_loss(data)
+            q_loss = self._compute_q_loss(data) # q_val_estimates, 
             iter_loss += q_loss
             # Logging
             mean_q_loss += q_loss.item() / num_batches
